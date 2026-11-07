@@ -29,8 +29,7 @@ An empty `._sc_` file beside the editor (beside `Godot.app` on a Mac) puts Godot
 
 ## Import and export
 
-1. `--headless --import` imports every asset into `.godot/imported/`, following the committed `.import` files.
-2. `--headless --export-release macOS build/Seeking.app` (or `Windows build/Seeking.exe`) exports with the matching preset in `export_presets.cfg`.
+The editor and the template download in parallel. Then one command, `--headless --export-release macOS build/Seeking.app` (or `Windows build/Seeking.exe`), imports every asset into `.godot/imported/` following the committed `.import` files and exports with the matching preset in `export_presets.cfg`; an export waits for the import on its own, so no separate `--import` run is needed.
 
 The macOS preset builds one universal binary for Apple silicon and Intel. Godot only allows that when `rendering/textures/vram_compression/import_etc2_astc` is on; every texture is imported losslessly, so the setting adds nothing to the export. The app is signed ad hoc by Godot's built-in signer (`codesign/codesign=1`), the same on every host, with no entitlements, and it is not notarised. It needs macOS 13 or later on Apple silicon and macOS 11 or later on Intel.
 
