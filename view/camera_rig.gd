@@ -8,7 +8,6 @@ var web_zoom := 1.0
 var shake := 0.0
 
 func _init() -> void:
-
 	process_callback = Camera2D.CAMERA2D_PROCESS_PHYSICS
 
 func _ready() -> void:

@@ -15,9 +15,7 @@ var sim: RefCounted
 var snap := PackedFloat64Array()
 var wall := 0.0
 var dead_time := 0.0
-
 var input_provider: Callable
-
 var sim_factory: Callable
 var menu := false
 var chapter := 0
@@ -33,7 +31,6 @@ func setup(c: Dictionary) -> void:
 	sim = sim_factory.call() if sim_factory.is_valid() else preload("res://game/sim_gd.gd").new()
 	sim.call(&"load_course", JSON.stringify(_ints_back(c), "", false, true))
 	_load_progress()
-
 	menu = true
 	chapter = maxi(0, _chapter_index(unlocked[unlocked.size() - 1]))
 	sim.call(&"reset", _chapter_pad(chapter))
@@ -117,19 +114,16 @@ func _physics_process(delta: float) -> void:
 		stepped.emit(snap)
 		return
 	if menu:
-
 		stepped.emit(snap)
 		if not _hold():
 			return
 		menu = false
 	var n: int = sim.call(&"step", _hold())
 	snap = sim.call(&"snapshot")
-
 	for ch: Dictionary in course.get("chapters", []):
 		var pad: Dictionary = course["pads"][int(ch["pad"])]
 		if snap[S.X] >= float(pad["x"]):
 			_unlock(String(ch["id"]))
-
 	if not ending and int(snap[S.SAVE]) == _last_save() and _last_save() > _chapter_pad(chapter) and snap[S.MODE] == S.MODE_PERCH:
 		ending = true
 		ending_time = 0.0
@@ -156,7 +150,6 @@ static func _ints_back(v: Variant) -> Variant:
 const DOUBLE := 0.45
 var paused := false
 var paused_at := 0.0
-
 signal finished
 var ending := false
 var ending_time := 0.0
@@ -192,7 +185,6 @@ func _unhandled_input(e: InputEvent) -> void:
 	var pressed: bool = (e is InputEventKey and e.pressed and not e.echo) or (e is InputEventMouseButton and e.pressed) or (e is InputEventJoypadButton and e.pressed)
 	if not pressed:
 		return
-
 	if ending:
 		if ending_time > 1.5:
 			_leave_ending()
@@ -202,7 +194,6 @@ func _unhandled_input(e: InputEvent) -> void:
 		return
 	var k := e as InputEventKey
 	if k.keycode == KEY_ESCAPE:
-
 		if menu:
 			set_paused(not paused)
 		elif not paused:

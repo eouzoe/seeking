@@ -18,16 +18,11 @@ void fragment() {
 	vec3 c = mix(zenith.rgb, horizon.rgb, pow(h, 1.6));
 	vec2 d = (UV - sun_uv) * vec2(aspect, 1.0);
 	float r = length(d);
-
 	c += glow_color.rgb * 0.32 * exp(-r * 3.2) * sun_amount;
-
 	float disc = smoothstep(0.045, 0.03, r);
-
 	c += sun_color.rgb * (disc * 2.2 + exp(-r * 22.0) * 0.6) * sun_amount;
-
 	float g = dot(c, vec3(0.299, 0.587, 0.114));
 	c = mix(c, vec3(g) * vec3(0.78, 0.82, 0.9), overcast * 0.8);
-
 	vec2 rc = vec2(1.0 - sun_uv.x, horizon_uv + 0.35);
 	float rr = length((UV - rc) * vec2(aspect, 1.0));
 	float band = (rr - 0.55) / 0.07;
@@ -35,7 +30,6 @@ void fragment() {
 		vec3 bow = clamp(abs(fract(band * 0.85 + vec3(0.0, 0.66, 0.33)) * 6.0 - 3.0) - 1.0, 0.0, 1.0);
 		c = mix(c, c + bow * 0.35, rainbow * sin(band * 3.14159) * smoothstep(horizon_uv, horizon_uv - 0.3, UV.y));
 	}
-
 	if (stars > 0.001) {
 		vec2 g = UV * vec2(aspect, 1.0) * 90.0;
 		vec2 id = floor(g);
@@ -47,7 +41,6 @@ void fragment() {
 		float s = smoothstep(0.08 + h * 0.06, 0.0, d) * step(0.86, h) * tw;
 		c += vec3(0.85, 0.9, 1.0) * s * stars * (1.0 - smoothstep(0.0, horizon_uv, UV.y) * 0.85) * (1.0 - overcast);
 	}
-
 	c += vec3(0.8, 0.85, 1.0) * flash * 1.8;
 	COLOR = vec4(c, 1.0);
 }

@@ -11,7 +11,6 @@ var petals: GPUParticles2D
 
 func build(lk: Resource) -> void:
 	look = lk
-
 	rain = GPUParticles2D.new()
 	rain.amount = maxi(int(look.rain_max), 1)
 	rain.amount_ratio = 0.0

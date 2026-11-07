@@ -2,7 +2,6 @@ class_name Look
 extends Resource
 
 @export_group("Color Grading")
-
 @export_range(0.0, 1.0) var grade_amount := 0.32
 @export_range(0.0, 2.0) var saturation := 1.05
 @export_range(0.0, 0.2) var grain := 0.012

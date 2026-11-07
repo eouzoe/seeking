@@ -7,10 +7,8 @@ const SFX_BUS_DB := -6.94
 const OFF := -80.0
 const NEAR_DB := -33.0
 const MID_DB := -8.0
-
 const SCENE_MUSIC := {"dawn": "chasing-daylight", "bloom": "meanwhile"}
 const MUSIC_FADE := 6.0
-
 const EDGES := [0.12, 0.32, 0.62, 0.7]
 const WEIGHTS := {
 	"robin": [1.0, 0.6, 0.6, 1.0, 0.3], "blackbird": [1.0, 0.3, 0.4, 1.0, 0.0], "songthrush": [1.0, 0.3, 0.6, 0.7, 0.0],
@@ -35,12 +33,10 @@ var thunder_at := -1.0
 var bolt_seed := -1
 var wall := 0.0
 var rng := RandomNumberGenerator.new()
-
 var birds: Dictionary = {}
 var voices: Array = []
 var band_free_at := {"low": 0.0, "mid": 0.0, "high": 0.0}
 var pigeon_next := 30.0
-
 var prev_hook := 0
 var prev_y := 0.0
 var prev_len := 0.0
@@ -101,7 +97,6 @@ func _buses() -> void:
 	var a := _bus("Ambience", "Master", 0.0)
 	if AudioServer.get_bus_effect_count(a) == 0:
 		AudioServer.add_bus_effect(a, AudioEffectLowPassFilter.new())
-
 		var haas := AudioEffectDelay.new()
 		haas.dry = 0.0
 		haas.tap1_active = true
@@ -114,7 +109,6 @@ func _buses() -> void:
 		haas.tap2_pan = 0.85
 		haas.feedback_active = false
 		AudioServer.add_bus_effect(a, haas)
-
 	var b := _bus("Birds", "Master", 0.0)
 	if AudioServer.get_bus_effect_count(b) == 0:
 		AudioServer.add_bus_effect(b, AudioEffectLowPassFilter.new())
@@ -207,7 +201,6 @@ func update(snap: PackedFloat64Array, mood: Dictionary, delta: float) -> void:
 	var rain: float = mood["rain"]
 	var overcast: float = mood["overcast"]
 	var storm: float = mood["storm"]
-
 	var p := clampf((float(mood["t"]) - 0.22) / 0.42, 0.0, 1.0)
 
 	var f := 1400.0 + above * above * 15000.0
@@ -252,14 +245,12 @@ func update(snap: PackedFloat64Array, mood: Dictionary, delta: float) -> void:
 			db += linear_to_db(maxf(gust, 1e-4))
 		var rate := 0.08 if id.begins_with("gust") else 0.8
 		var cur: float = bed_db[id]
-
 		var lin := lerpf(db_to_linear(cur), db_to_linear(db), 1.0 - exp(-delta / rate))
 		bed_db[id] = linear_to_db(maxf(lin, 1e-5))
 		(beds[id] as AudioStreamPlayer).volume_db = bed_db[id]
 	var amb_lp: AudioEffectLowPassFilter = AudioServer.get_bus_effect(AudioServer.get_bus_index(&"Ambience"), 0)
 	amb_lp.cutoff_hz = lerpf(amb_lp.cutoff_hz, 500.0 if dead else 20000.0, 1.0 - exp(-delta / 0.5))
 	AudioServer.set_bus_volume_db(AudioServer.get_bus_index(&"Ambience"), linear_to_db(0.5) if dead else 0.0)
-
 	var b_lp: AudioEffectLowPassFilter = AudioServer.get_bus_effect(AudioServer.get_bus_index(&"Birds"), 0)
 	b_lp.cutoff_hz = 20000.0 - 16000.0 * smoothstep(0.0, 1.0, above)
 	AudioServer.set_bus_volume_db(AudioServer.get_bus_index(&"Birds"), -6.0 * above)
@@ -284,7 +275,6 @@ func _music(x: float, db: float, delta: float) -> void:
 			cur_track = music_a.stream.resource_path.get_file().get_basename()
 		music_scene = sid
 		if cur_track != track:
-
 			var tmp := music_b
 			music_b = music_a
 			music_a = tmp
@@ -329,7 +319,6 @@ func _birds(p: float, rain: float, overcast: float, storm: float, dead: bool) ->
 			st["next"] = wall + rng.randf_range(0.2, 1.0)
 			continue
 		if int(st["left"]) <= 0:
-
 			if rng.randf() > w:
 				st["next"] = wall + rng.randf_range(10.0, 30.0)
 				continue
@@ -368,7 +357,6 @@ func _birds(p: float, rain: float, overcast: float, storm: float, dead: bool) ->
 			st["next"] = wall + maxf(gap, dur + 0.3)
 		else:
 			st["next"] = wall + rng.randf_range(30.0, 90.0) / maxf(density, 0.05)
-
 	if wall >= pigeon_next:
 		pigeon_next = wall + rng.randf_range(60.0, 180.0) / maxf(density, 0.1)
 		if rain < 0.3:
@@ -397,7 +385,6 @@ func _thunder(mood: Dictionary) -> void:
 func _self_detected(snap: PackedFloat64Array) -> void:
 	var hook := int(snap[S.HOOK])
 	var l := snap[11]
-
 	if prev_hook == S.HOOK_RETRACT and hook == S.HOOK_IDLE:
 		play("dock", at(-40, -24))
 	var y := snap[S.Y]

@@ -30,7 +30,6 @@ func build(lk: Resource) -> void:
 	env.set_glow_level(3, 1.0)
 	env.set_glow_level(5, 1.0)
 	env.set_glow_level(6, 0.6)
-
 	env.tonemap_mode = Environment.TONE_MAPPER_AGX
 	env.adjustment_enabled = true
 	var we := WorldEnvironment.new()
@@ -41,7 +40,6 @@ func update(pal: Dictionary, mood: Dictionary, sun_uv: Vector2) -> void:
 	var overcast: float = mood["overcast"]
 	var flash: float = mood["flash"]
 	var sun_amt: float = float(pal["sun_a"]) * (1.0 - overcast * 0.9)
-
 	var g := grade_tex.gradient
 	g.offsets = PackedFloat32Array([0.0, 0.35, 0.7, 1.0])
 	var ink: Color = pal["ink"]
@@ -49,7 +47,6 @@ func update(pal: Dictionary, mood: Dictionary, sun_uv: Vector2) -> void:
 	post_mat.set_shader_parameter(&"grade_amount", look.grade_amount * lerpf(1.0, 1.25, overcast))
 	post_mat.set_shader_parameter(&"sun_uv", sun_uv)
 	post_mat.set_shader_parameter(&"ray_color", pal["glow"])
-
 	post_mat.set_shader_parameter(&"ray_amount", look.ray_amount * 4.0 * float(mood["clearing"]))
 	post_mat.set_shader_parameter(&"ray_threshold", look.ray_threshold)
 	post_mat.set_shader_parameter(&"grain", look.grain * (1.0 + float(mood["rain"]) * 0.6))

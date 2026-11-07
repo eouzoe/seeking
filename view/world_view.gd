@@ -4,7 +4,6 @@ const PX := 24.0
 const CLOUD_SEA_Y := 0.0
 const SWAY := preload("res://view/shaders/sway.gdshader")
 const Kits := preload("res://look/kits.gd")
-
 var TRUNK_TINT := Color(0.42, 0.38, 0.4)
 var look: Resource
 var sway_near: ShaderMaterial
@@ -13,7 +12,6 @@ var tip_springs: Dictionary = {}
 var dapples: Array[PointLight2D] = []
 var leaf_burst: CPUParticles2D
 const FAR_LAYERS: Array[Dictionary] = [
-
 	{"par": 0.08, "base": 15.0, "amp": 16.0, "freq": 0.012, "depth": 0.0, "seed": 101},
 	{"par": 0.16, "base": 13.0, "amp": 11.0, "freq": 0.02, "depth": 0.22, "seed": 102},
 	{"par": 0.3, "base": 10.0, "amp": 7.0, "freq": 0.035, "depth": 0.5, "seed": 103},
@@ -44,7 +42,6 @@ func build(c: Dictionary, lk: Resource) -> void:
 	sway_far = ShaderMaterial.new()
 	sway_far.shader = SWAY
 	sway_far.set_shader_parameter(&"amount", 0.35)
-
 	bark_tex = _load_tex("bark")
 	rock_tex = _load_tex("rock")
 	for n in ["leaf_a", "leaf_b", "leaf_c", "leaf_d"]:
@@ -173,10 +170,8 @@ func _build_far_layers() -> void:
 		px.add_child(p)
 		far_polys.append(p)
 		far_depths.append(float(L["depth"]))
-
 	_build_tree_layer(0.62, 0.4, 201, 9.0, 0.55)
 	_build_tree_layer(0.8, 0.55, 202, 7.5, 0.75)
-
 	_build_foreground(1.35, 301)
 
 func _build_tree_layer(par: float, depth: float, seed_v: int, spacing: float, scale_k: float) -> void:
@@ -194,7 +189,6 @@ func _build_tree_layer(par: float, depth: float, seed_v: int, spacing: float, sc
 	holder.material = sway_far
 	px.add_child(holder)
 	while x < x1:
-
 		var top := rng.randf_range(20.0, 30.0) * scale_k + 6.0
 		var tex: Texture2D = far_trees[rng.randi() % far_trees.size()]
 		var s := Sprite2D.new()
@@ -222,7 +216,6 @@ func _build_foreground(par: float, seed_v: int) -> void:
 	rng.seed = seed_v
 	var x := -40.0
 	while x < length * par + 80.0:
-
 		var c := _ellipse(w2s(x, rng.randf_range(34.0, 39.0)), Vector2(rng.randf_range(5.0, 9.0), rng.randf_range(3.0, 4.5)) * PX, 18, 0.2, rng)
 		var fg := _leaf_sprite(c[0].lerp(c[c.size() / 2], 0.5), rng.randf_range(10.0, 16.0) * PX, Color(0.1, 0.11, 0.13), rng, px)
 		fg.light_mask = 0
@@ -234,7 +227,6 @@ func update_far(pal: Dictionary, overcast: float) -> void:
 		var fog: Color = pal["fog"]
 		var ink: Color = pal["ink"]
 		var hor: Color = pal["horizon"]
-
 		var c := hor.lerp(fog, 0.35 + d * 0.4).lerp(ink, 0.12 + d * 0.6)
 		c = c.lerp(Color(0.62, 0.64, 0.7), overcast * 0.4)
 		far_polys[i].modulate = c
@@ -252,19 +244,16 @@ func _build_trunk(t: Dictionary) -> void:
 	var bot := -12.0
 	var pts := PackedVector2Array([w2s(x - w * 0.75, bot), w2s(x - w * 0.5, top), w2s(x + w * 0.5, top), w2s(x + w * 0.75, bot)])
 	if solid:
-
 		pts = PackedVector2Array([w2s(x - w * 0.75, bot), w2s(x - w * 0.55, top - 0.6), w2s(x - w * 0.15, top), w2s(x + w * 0.1, top - 0.9), w2s(x + w * 0.4, top + 0.2), w2s(x + w * 0.6, top - 0.5), w2s(x + w * 0.75, bot)])
 		var p := _poly(pts, bark_tex, TRUNK_TINT * Color(0.9, 0.9, 0.95), root)
 		p.texture_scale = Vector2(1.5, 1.5)
 		_occluder(pts, root)
 		return
-
 	var kit := Kits.at(course.get("scenes", []), x)
 	_poly(pts, bark_tex, kit["bark_tint"], root)
 	var span: float = t["span"]
 	if span <= 0.0:
 		return
-
 	var crown := Node2D.new()
 	crown.z_index = 2
 	root.add_child(crown)
@@ -278,7 +267,6 @@ func _build_trunk(t: Dictionary) -> void:
 		var shade := rng.randf_range(0.75, 1.0)
 		var blob := _leaf_sprite(w2s(cx, cy), r.x * 2.3, Color(kit["leaf_tint"]) * Color(shade, shade, shade), rng, crown)
 		blob.material = sway_near
-
 		if bloom_tex != null and rng.randf() < float(kit["bloom"]):
 			var b := Sprite2D.new()
 			b.texture = bloom_tex
@@ -288,7 +276,6 @@ func _build_trunk(t: Dictionary) -> void:
 			b.modulate = kit["bloom_tint"]
 			b.material = sway_near
 			crown.add_child(b)
-
 	var dap: Texture2D = _opt_tex("res://art/elements/dapple.png")
 	if dap != null and rng.randf() < float(kit["dapple"]):
 		var l := PointLight2D.new()
@@ -310,7 +297,6 @@ func _build_anchor(a: Dictionary, t: Dictionary) -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = int(ax * 97.0 + ay * 13.0)
 	if a["on"] == "vine":
-
 		var top: float = t["top"]
 		var vine := Line2D.new()
 		vine.points = PackedVector2Array([w2s(ax, top - 2.0) - tip.position, Vector2.ZERO])
@@ -319,7 +305,6 @@ func _build_anchor(a: Dictionary, t: Dictionary) -> void:
 
 		tip.add_child(vine)
 	else:
-
 		var tx: float = t["x"]
 		var side := signf(ax - tx) if absf(ax - tx) > 0.01 else 1.0
 		var base_y := ay - 1.2
@@ -327,7 +312,6 @@ func _build_anchor(a: Dictionary, t: Dictionary) -> void:
 		var b := _poly(pts, bark_tex, TRUNK_TINT, tip)
 		b.texture_scale = Vector2(2, 2)
 		var _unused := side
-
 	var tuft := _leaf_sprite(Vector2.ZERO, 2.8 * PX, Color(Kits.at(course.get("scenes", []), ax)["leaf_tint"]) * 1.1, rng, tip)
 	tuft.z_index = 1
 	tuft.material = sway_near
@@ -345,7 +329,6 @@ func _build_pad(p: Dictionary, t: Dictionary) -> void:
 	var b := _poly(pts, bark_tex, TRUNK_TINT * Color(1.1, 1.1, 1.1))
 	b.z_index = 1
 	_occluder(pts)
-
 	var lx := x1 - 0.6 if absf(x1 - tx) > absf(x0 - tx) else x0 + 0.6
 	var lamp := Node2D.new()
 	lamp.position = w2s(lx, py - 1.6)
@@ -364,11 +347,9 @@ func _build_pad(p: Dictionary, t: Dictionary) -> void:
 	var light := PointLight2D.new()
 	light.texture = _radial_tex()
 	light.texture_scale = 7.0
-
 	light.height = 70.0
 	light.color = look.lantern_color
 	light.energy = look.lantern_energy.x
-
 	light.shadow_enabled = false
 	lamp.add_child(light)
 	lanterns.append(light)
@@ -424,7 +405,6 @@ static func _radial_tex() -> GradientTexture2D:
 	return _radial
 
 func _build_fx() -> void:
-
 	leaf_burst = CPUParticles2D.new()
 	leaf_burst.emitting = false
 	leaf_burst.one_shot = true
@@ -445,7 +425,6 @@ func _build_fx() -> void:
 	leaf_burst.z_index = 6
 	leaf_burst.texture = leaf_tex_small()
 	add_child(leaf_burst)
-
 	var ramp := Gradient.new()
 	ramp.offsets = PackedFloat32Array([0.0, 0.3, 0.5, 0.7, 1.0])
 	ramp.colors = PackedColorArray([Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 0.35), Color(1, 1, 1, 1), Color(1, 1, 1, 0)])
@@ -508,6 +487,5 @@ func update_lanterns(mood: Dictionary, tt: float) -> void:
 		lanterns[i].energy = base * f
 		lanterns[i].texture_scale = 10.0 * (0.97 + 0.03 * f)
 		lantern_bodies[i].rotation = (0.04 + wind * 0.4) * sin(tt * 1.3 + i * 2.0)
-
 	for i in dapples.size():
 		dapples[i].offset = Vector2(sin(tt * 0.5 + i) * 6.0 + wind * 30.0, cos(tt * 0.37 + i * 1.3) * 3.0)

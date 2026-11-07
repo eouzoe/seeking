@@ -25,7 +25,6 @@ func build(course: Dictionary, lk: Resource) -> void:
 	sky_mat.shader = preload("res://view/shaders/sky.gdshader")
 	rect.material = sky_mat
 	layer.add_child(rect)
-
 	bolt = Line2D.new()
 	bolt.width = 3.0
 	bolt.default_color = Color(5.0, 5.2, 6.5)
@@ -43,7 +42,6 @@ func build(course: Dictionary, lk: Resource) -> void:
 	add_child(cloud)
 
 	sun = DirectionalLight2D.new()
-
 	sun.shadow_enabled = false
 	sun.shadow_filter = Light2D.SHADOW_FILTER_PCF5
 	sun.shadow_filter_smooth = 4.0
@@ -62,11 +60,9 @@ func on_physics(snap: PackedFloat64Array, delta: float) -> void:
 		in_cloud = false
 
 func update(snap: PackedFloat64Array, pal: Dictionary, mood: Dictionary, cam_center: Vector2, vp: Vector2) -> void:
-
 	var prog := clampf((float(mood["t"]) - 0.215) / (0.68 - 0.215), 0.0, 1.0)
 	var overcast: float = mood["overcast"]
 	var storm: float = mood["storm"]
-
 	var sun_x := lerpf(0.82, 0.2, prog)
 	var sun_y := 0.62 - sin(prog * PI) * 0.45 + clampf(-cam_center.y / 40.0, -0.2, 0.2) * 0.15
 	sun_uv = Vector2(sun_x, sun_y)
@@ -84,14 +80,12 @@ func update(snap: PackedFloat64Array, pal: Dictionary, mood: Dictionary, cam_cen
 	sky_mat.set_shader_parameter(&"overcast", overcast)
 	sky_mat.set_shader_parameter(&"rainbow", mood["rainbow"])
 	sky_mat.set_shader_parameter(&"stars", pal["star"])
-
 	var dir := Vector2(0.5 - sun_x, 0.9 - sun_y * 0.6).normalized()
 	sun.rotation = dir.angle() - PI * 0.5
 	sun.height = look.sun_height
 	var flash: float = mood["flash"]
 	sun.color = Color(pal["sun"]).lerp(Color(0.7, 0.75, 0.85), overcast).lerp(Color(0.85, 0.9, 1.0), flash)
 	sun.energy = lerpf(look.sun_energy.x, look.sun_energy.y, sun_amt) + flash * 2.5
-
 	cloud_mat.set_shader_parameter(&"body", Color(pal["horizon"]).lerp(Color(pal["fog"]), 0.35).darkened(0.18).lerp(stormy, storm * 0.5))
 	cloud_mat.set_shader_parameter(&"shade", Color(pal["fog"]).lerp(Color(pal["ink"]), 0.35))
 	cloud_mat.set_shader_parameter(&"rim", pal["glow"])

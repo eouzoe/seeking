@@ -7,7 +7,6 @@ uniform float rim_power = 1.4;
 uniform float px_per_unit = 24.0;
 uniform float edge_units = 2.2;
 uniform float speed = 0.35;
-
 uniform vec2 girl = vec2(0.0, 100.0);
 uniform vec2 impact = vec2(0.0, 0.0);
 uniform float impact_age = 99.0;
@@ -43,12 +42,9 @@ float fbm(vec2 p) {
 void fragment() {
 	vec2 w = world_px / px_per_unit;
 	float t = TIME * speed;
-
 	float edge = (fbm(vec2(w.x * 0.08 + t * 0.2, 0.0)) - 0.5) * edge_units * 2.0 + fbm(vec2(w.x * 0.35 - t, 3.0)) * 0.8;
-
 	float near = exp(-pow((w.x - girl.x) / 2.2, 2.0)) * smoothstep(4.0, 0.0, girl.y);
 	edge += near * 1.6;
-
 	float ring_r = impact_age * 7.0;
 	float dx = abs(w.x - impact.x);
 	float ring = exp(-pow((dx - ring_r) * 0.9, 2.0)) * exp(-impact_age * 0.9);
@@ -57,7 +53,6 @@ void fragment() {
 	float a = smoothstep(-0.4, 0.6, depth);
 	float puff = fbm(w * vec2(0.18, 0.35) + vec2(t * 0.6, 0.0));
 	vec3 c = mix(body.rgb, shade.rgb, clamp(depth * 0.12 + (0.5 - puff) * 0.6, 0.0, 1.0));
-
 	float lit = exp(-max(depth, 0.0) * 1.2) * smoothstep(-0.4, 0.3, depth);
 	c += rim.rgb * lit * rim_power;
 	c += rim.rgb * ring * lit * 1.5;

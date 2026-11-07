@@ -21,7 +21,6 @@ func build(lk: Resource) -> void:
 	bird_layer = CanvasLayer.new()
 	bird_layer.layer = -5
 	add_child(bird_layer)
-
 	mist_tex = load("res://art/elements/mist_band.png") as Texture2D if ResourceLoader.exists("res://art/elements/mist_band.png") else null
 	if mist_tex != null:
 		for z in [-3, 9]:
@@ -52,7 +51,6 @@ func update(kit: Dictionary, cam_px: Vector2, view: Vector2, vp: Vector2, wind: 
 		var m := mists[i]
 		var front := i == 1
 		var t := Time.get_ticks_msec() / 1000.0
-
 		m.position = Vector2(cam_px.x, -(6.0 if not front else 3.0) * PX)
 		var w := m.region_rect.size.x
 		m.region_rect.position.x = fmod(t * (8.0 + wind.x * 60.0) * (1.6 if front else 1.0), float(mist_tex.get_width()))
@@ -67,7 +65,6 @@ func _update_birds(kit: Dictionary, vp: Vector2, fog: Color, delta: float) -> vo
 	next_flock -= delta * rate
 	if next_flock <= 0.0 and rate > 0.05:
 		next_flock = rng.randf_range(14.0, 30.0)
-
 		var n := rng.randi_range(3, 6)
 		var base := Vector2(-60.0, rng.randf_range(0.12, 0.35) * vp.y)
 		var v := Vector2(rng.randf_range(60.0, 95.0), rng.randf_range(-6.0, 4.0))
@@ -118,7 +115,6 @@ func _update_butterflies(kit: Dictionary, cam_px: Vector2, view: Vector2, delta:
 	for d: Dictionary in butterflies:
 		var b: AnimatedSprite2D = d["node"]
 		var home: Vector2 = d["home"]
-
 		if home.x < cam_px.x - view.x * 0.6:
 			home = cam_px + Vector2(view.x * rng.randf_range(0.3, 0.55), rng.randf_range(-0.05, 0.25) * view.y)
 			d["home"] = home

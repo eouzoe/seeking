@@ -52,7 +52,6 @@ func _process(delta: float) -> void:
 	else:
 		progress = 1.0
 		if game == null:
-
 			game = packed.instantiate()
 			get_tree().root.add_child(game)
 			get_tree().root.move_child(game, 0)

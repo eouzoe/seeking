@@ -3,7 +3,6 @@ extends Node2D
 const S := preload("res://game/snap.gd")
 const Palette := preload("res://view/palette.gd")
 const WorldView := preload("res://view/world_view.gd")
-
 const GirlView := preload("res://view/girl_view.gd")
 const CameraRig := preload("res://view/camera_rig.gd")
 const SkyView := preload("res://view/sky.gd")
@@ -95,7 +94,6 @@ func _process(delta: float) -> void:
 		rig.follow(snap, false)
 	var mood: Dictionary = host.mood()
 	var pal := Palette.sample(float(mood["t"]))
-
 	wind = Vector2(float(mood["wind"]) * look.wind_sway, 0.0)
 	RenderingServer.global_shader_parameter_set(&"wind", wind)
 	RenderingServer.global_shader_parameter_set(&"storm", float(mood["storm"]))
@@ -114,7 +112,6 @@ func _process(delta: float) -> void:
 func _unhandled_input(e: InputEvent) -> void:
 	if e is InputEventKey and e.pressed and not e.echo:
 		var k := e as InputEventKey
-
 		var mac_full := k.keycode == KEY_F and k.ctrl_pressed and k.meta_pressed
 		if k.keycode == KEY_F11 or mac_full:
 			var full := DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN

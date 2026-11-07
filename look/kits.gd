@@ -3,7 +3,6 @@ extends RefCounted
 const BLEND := 80.0
 
 const KITS := {
-
 	"prologue": {
 		"leaf_tint": Color(0.28, 0.34, 0.33), "bark_tint": Color(0.32, 0.31, 0.36),
 		"bloom": 0.0, "bloom_tint": Color(0.9, 0.85, 0.95),
@@ -11,7 +10,6 @@ const KITS := {
 		"dapple": 0.0, "mist": 0.7, "mist_color": Color(0.55, 0.6, 0.78),
 		"birds": 0.0, "butterflies": 0.0, "fireflies": 1.0,
 	},
-
 	"dawn": {
 		"leaf_tint": Color(0.42, 0.56, 0.36), "bark_tint": Color(0.42, 0.38, 0.4),
 		"bloom": 0.0, "bloom_tint": Color(1.0, 0.9, 0.92),
@@ -19,7 +17,6 @@ const KITS := {
 		"dapple": 0.3, "mist": 0.45, "mist_color": Color(0.95, 0.8, 0.78),
 		"birds": 0.6, "butterflies": 0.0, "fireflies": 0.3,
 	},
-
 	"bloom": {
 		"leaf_tint": Color(0.5, 0.64, 0.4), "bark_tint": Color(0.46, 0.42, 0.42),
 		"bloom": 0.55, "bloom_tint": Color(1.0, 0.86, 0.9),

@@ -9,7 +9,6 @@ const K := PX * CHAR_H / 130.0
 const O := Vector2(65, 80)
 const FEET_BELOW := (140.0 - 80.0) * CHAR_H / 130.0
 const STAND_LIFT := FEET_BELOW - BODY_R
-
 const J_NECK := Vector2(66.0, 58.0)
 const J_SHOULDER := Vector2(79.0, 67.0)
 const J_ELBOW := Vector2(88.0, 81.0)
@@ -23,7 +22,6 @@ const REST_FORE := 76.29 * DEG
 const REST_LEG_FAR := -0.32 * DEG
 const REST_LEG_NEAR := 2.23 * DEG
 const CLAW_HUB := Vector2(60, 75)
-
 const CLOAK_CHAIN: Array[Vector2] = [Vector2(64.7, 52), Vector2(64.7, 62), Vector2(64.7, 72), Vector2(64.7, 82), Vector2(64.7, 92), Vector2(64.7, 102), Vector2(64.7, 111)]
 const CLOAK_HW := 31.6
 const CLOAK_STIFF: Array[float] = [999.0, 34.0, 20.0, 13.0, 9.0, 7.0, 6.0]
@@ -49,12 +47,10 @@ var aim_light: PointLight2D
 var trail: Line2D
 var trail_p: PackedVector2Array = []
 var trail_v: PackedVector2Array = []
-
 var pose := {"body": 0.0, "head": 0.05, "arm": REST_UPPER, "fore": REST_FORE - REST_UPPER, "leg_far": REST_LEG_FAR, "leg_near": REST_LEG_NEAR, "squat": 0.0, "lift": STAND_LIFT}
 var recoil := 0.0
 var bump_t := -9.0
 var wall := 0.0
-
 var fx := PackedVector2Array()
 var fo := PackedVector2Array()
 var frest: Array[Vector2] = []
@@ -93,14 +89,12 @@ func build(lk: Resource, w: Node2D, c: Dictionary = {}) -> void:
 	add_child(body)
 	rig = Node2D.new()
 	body.add_child(rig)
-
 	_part("leg-far", J_HIP_FAR, 0)
 	_part("leg-near", J_HIP_NEAR, 1)
 	_part("torso", O, 2)
 	_part("arm-upper", J_SHOULDER, 3)
 	_part("hood", J_NECK, 5)
 	_part("launcher", J_ELBOW, 6)
-
 	cloak = Polygon2D.new()
 	cloak.texture = tex
 	cloak.z_index = 8
@@ -120,7 +114,6 @@ func build(lk: Resource, w: Node2D, c: Dictionary = {}) -> void:
 	body_light.height = 40.0
 	body_light.color = Color(1.0, 0.85, 0.7)
 	rig.add_child(body_light)
-
 	var occ := LightOccluder2D.new()
 	var op := OccluderPolygon2D.new()
 	op.polygon = PackedVector2Array([Vector2(-10, -30), Vector2(10, -30), Vector2(14, 30), Vector2(-14, 30)])
@@ -202,7 +195,6 @@ func _init_cloak() -> void:
 	for i in n:
 		frest.append((CLOAK_CHAIN[i] - O) * K)
 		flen.append(0.0 if i == 0 else CLOAK_CHAIN[i].distance_to(CLOAK_CHAIN[i - 1]) * K)
-
 	var quads: Array = []
 	for i in n - 1:
 		quads.append(PackedInt32Array([i, n + i, n + i + 1, i + 1]))
@@ -269,7 +261,6 @@ func _target_pose(snap: PackedFloat64Array) -> Dictionary:
 		if bumped:
 			t.merge({"body": 0.2, "arm": 1.1, "fore": 1.2, "leg_far": 1.0, "leg_near": 1.1, "head": 0.4}, true)
 		else:
-
 			var fl := 1.0 - clampf(absf(vy) / 7.0, 0.0, 1.0)
 			var up := vy > 0.0
 			var lean := clampf(-vx * 0.01, -0.25, 0.25)
@@ -343,7 +334,6 @@ func _apply_pose() -> void:
 	var elbow := sh + _dir(arm) * UPPER * K
 	parts["launcher"].position = elbow
 	parts["launcher"].rotation = -(arm + fore - REST_FORE)
-
 	var m_local := elbow + _dir(arm + fore) * LAUNCHER * K
 	muzzle = rig.transform * m_local
 	fore_dir = rig.transform.basis_xform(_dir(arm + fore)).normalized()
@@ -380,7 +370,6 @@ func _step_cloak(dt: float, wind: Vector2, speed: float, teleport: bool) -> void
 				var d := fx[i] - fx[i - 1]
 				var dl := maxf(d.length(), 0.0001)
 				fx[i] -= d * ((dl - flen[i]) / dl)
-
 	var hw := CLOAK_HW * K * (rig.scale.x + rig.scale.y) * 0.5
 	var l := PackedVector2Array()
 	var r := PackedVector2Array()
@@ -401,7 +390,6 @@ func _place_hook(snap: PackedFloat64Array) -> void:
 	if hook == S.HOOK_STUCK:
 		tip = Vector2(snap[S.HOOK_AX] * PX, -snap[S.HOOK_AY] * PX) + world.tip_offset(int(snap[S.HOOK_ANCHOR]))
 	elif hook == S.HOOK_SHOOT or hook == S.HOOK_RETRACT or hook == 4:
-
 		tip = p + muzzle + Vector2(snap[S.HOOK_DX], -snap[S.HOOK_DY]) * snap[S.HOOK_TIP] * PX
 		open = 1.0
 	else:
@@ -415,7 +403,6 @@ func _place_hook(snap: PackedFloat64Array) -> void:
 	var spread := 0.28 + open * 0.95
 	prongs[0].rotation = spread
 	prongs[1].rotation = -spread
-
 	var target := int(snap[S.TARGET])
 	var want := 0.0
 	if target >= 0 and target < world.anchor_tips.size() and hook == S.HOOK_IDLE:
@@ -456,7 +443,6 @@ func update_look(snap: PackedFloat64Array, pal: Dictionary, mood: Dictionary, de
 		l.modulate = Color(sun_c.r, sun_c.g, sun_c.b, 1.0)
 	body_light.energy = lerpf(look.girl_light_energy.x, look.girl_light_energy.y, float(mood["overcast"]))
 	if snap[S.MODE] == S.MODE_DEAD:
-
 		if snap[S.Y] < 3.0:
 			body.position.y += 60.0 * delta
 			body.modulate.a = clampf(1.0 - dead_time * 1.2, 0.0, 1.0)

@@ -43,7 +43,6 @@ func mood(x: float, wall: float) -> Dictionary:
 	var rainbow := _ramp(p, 0.7, 0.76) * (1.0 - _ramp(p, 0.93, 0.98))
 	var base_wind := 0.08
 	if not scenes.is_empty():
-
 		t = _scene_val("time", x)
 		overcast = _scene_val("overcast", x)
 		rain = _scene_val("rain", x)
@@ -71,7 +70,6 @@ func gust_at(t: float, storm: float, need: float) -> float:
 	return maxf(calm, clampf(storm, 0.0, 1.0) * _train(t, STORM)) if storm > 0.0 else calm
 
 func _hash01(k: int, i: int) -> float:
-
 	var h := hash([seed_v, k, i])
 	return float(h & 0xffffff) / float(0xffffff)
 

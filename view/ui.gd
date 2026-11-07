@@ -48,11 +48,9 @@ func _process(delta: float) -> void:
 	screen.queue_redraw()
 
 func _input(e: InputEvent) -> void:
-
 	if host.paused and e is InputEventMouseButton and e.pressed and continue_rect.has_point(e.position):
 		host.set_paused(false)
 		get_viewport().set_input_as_handled()
-
 	elif host.paused and e is InputEventMouseButton and e.pressed and exit_rect.has_point(e.position):
 		if t - exit_armed < ARM:
 			get_tree().quit()
@@ -63,7 +61,6 @@ func _input(e: InputEvent) -> void:
 func _draw_screen() -> void:
 	var sz := screen.get_viewport_rect().size
 	var c := sz * 0.5
-
 	if menu_a > 0.001:
 		var top := Vector2(c.x, sz.y * 0.24)
 		var breathe := 0.75 + 0.25 * sin(t * 1.6)
@@ -88,7 +85,6 @@ func _draw_screen() -> void:
 			else:
 				screen.draw_arc(p, 18.0 * press, 0.0, TAU, 48, Color(0.94, 0.89, 0.84, 0.7 * ha), 1.5, true)
 				screen.draw_circle(p, 3.0, Color(0.94, 0.89, 0.84, 0.8 * ha))
-
 	if pause_a > 0.001:
 		screen.draw_rect(Rect2(Vector2.ZERO, sz), Color(0.02, 0.025, 0.05, 0.5 * pause_a))
 		var pw := minf(420.0, sz.x * 0.6)
@@ -104,14 +100,12 @@ func _draw_screen() -> void:
 		box.shadow_size = 24
 		box.anti_aliasing = true
 		screen.draw_style_box(box, panel)
-
 		var s := 72.0
 		var cc := Vector2(c.x, panel.position.y + ph * 0.42)
 		continue_rect = Rect2(cc - Vector2(s, s) * 0.5, Vector2(s, s))
 		var hover := continue_rect.has_point(screen.get_local_mouse_position())
 		if hover:
 			screen.draw_circle(cc, s * 0.62, Color(1.0, 0.85, 0.6, 0.08 * pause_a))
-
 		var ec := Vector2(c.x, panel.position.y + ph * 0.8)
 		var es := 34.0
 		exit_rect = Rect2(ec - Vector2(es, es) * 0.5, Vector2(es, es))
@@ -127,7 +121,6 @@ func _draw_screen() -> void:
 		else:
 			var tri := PackedVector2Array([cc + Vector2(-14, -20), cc + Vector2(22, 0), cc + Vector2(-14, 20)])
 			screen.draw_colored_polygon(tri, Color(0.94, 0.89, 0.84, 0.85 * pause_a))
-
 	if end_a > 0.001:
 		screen.draw_rect(Rect2(Vector2.ZERO, sz), Color(0.012, 0.014, 0.03, end_a))
 		var ta := clampf((end_a - 0.6) / 0.4, 0.0, 1.0)

@@ -57,7 +57,6 @@ func segment(id: String, kind: String, items: Array) -> void:
 			if tr < 0:
 				errors.append("%s: pad (%s, %s) has no trunk" % [id, px, it[2]])
 				continue
-
 			pads.append({"x": px, "y": float(it[2]), "w": float(it[3]), "trunk": tr, "save": it.size() > 4 and bool(it[4])})
 			last = maxf(last, float(it[1]))
 	segments.append({"id": id, "kind": kind, "x0": x0, "x1": x0 + last})
@@ -66,11 +65,9 @@ func segment(id: String, kind: String, items: Array) -> void:
 func finish(id: String, seed_v: int, start: Vector2) -> Dictionary:
 	var sorted := anchors.duplicate()
 	sorted.sort_custom(func(p: Dictionary, q: Dictionary) -> bool: return float(p["x"]) < float(q["x"]))
-
 	var last_pad: Dictionary = pads[pads.size() - 1]
 	return {
 		"id": id, "seed": seed_v, "start": {"x": start.x, "y": start.y},
 		"trunks": trunks, "anchors": sorted, "rocks": rocks, "pads": pads, "segments": segments,
-
 		"length": float(last_pad["x"]) - float(last_pad["w"]) / 2.0 + 2.0,
 	}

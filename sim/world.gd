@@ -20,7 +20,6 @@ var mode := "perch"
 var crouch := 0.0
 var prev_hold := false
 var target := -1
-
 var h_state := "idle"
 var h_anchor := -1
 var h_tip := 0.0
@@ -315,7 +314,6 @@ func step(c: Dictionary, hold: bool, ev: Array) -> void:
 		ev.append({"type": "segment", "index": nxt, "kind": segs[nxt]["kind"]})
 
 	var R := T.BODY_R
-
 	var hit := ""
 	var trunks: Array = c["trunks"]
 	for i in trunks.size():
