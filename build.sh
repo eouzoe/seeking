@@ -1,12 +1,13 @@
 #!/bin/sh
 set -eu
+trap 'exit 130' INT TERM
 
 GODOT_VERSION=4.7.2
 TAG="$GODOT_VERSION-stable"
 RELEASES="https://github.com/godotengine/godot-builds/releases/download/$TAG"
 TEMPLATE_ARCHIVE="$RELEASES/Godot_v${TAG}_export_templates.tpz"
 
-ROOT=$(cd "$(dirname "$0")" && pwd)
+ROOT=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 OUT="$ROOT/build"
 TOOLS="$OUT/toolchain"
 TEMPLATES="$TOOLS/editor_data/export_templates/$GODOT_VERSION.stable"
@@ -52,17 +53,11 @@ verify() {
 
 download() {
 	url=$1 file=$2 range=${3-} limit=${4-}
-	attempt=1
-	while :; do
-		if [ -n "$range" ]; then
-			curl -fsSL --connect-timeout 30 --retry 3 --retry-delay 5 --max-filesize "$limit" -r "$range" -o "$file.part" "$url" && break
-		else
-			curl -fsSL --connect-timeout 30 --retry 3 --retry-delay 5 -o "$file.part" "$url" && break
-		fi
-		[ "$attempt" -lt 3 ] || die "download failed: $url"
-		attempt=$((attempt + 1))
-		sleep 5
-	done
+	if [ -n "$range" ]; then
+		curl -fsSL --connect-timeout 30 --retry 5 --max-filesize "$limit" -r "$range" -o "$file.part" "$url"
+	else
+		curl -fsSL --connect-timeout 30 --retry 5 -o "$file.part" "$url"
+	fi || die "download failed: $url"
 	mv "$file.part" "$file"
 }
 
@@ -99,8 +94,11 @@ editor() {
 		if [ "$HOST" = macos ]; then
 			ditto -x -k "$TOOLS/$archive" "$TOOLS"
 		else
-			command -v unzip >/dev/null 2>&1 || die "unzip is needed to unpack the editor"
-			unzip -q -o "$TOOLS/$archive" -d "$TOOLS"
+			if command -v unzip >/dev/null 2>&1; then
+				unzip -q -o "$TOOLS/$archive" -d "$TOOLS"
+			else
+				bsdtar -xf "$TOOLS/$archive" -C "$TOOLS"
+			fi
 			chmod +x "$GODOT"
 		fi
 		rm -f "$TOOLS/$archive"
@@ -130,16 +128,21 @@ template() {
 prepare() {
 	command -v curl >/dev/null 2>&1 || die "curl is needed to download Godot"
 	HOST=$(host)
+	if [ "$HOST" = linux ] && ! command -v unzip >/dev/null 2>&1 && ! command -v bsdtar >/dev/null 2>&1; then
+		die "unzip or bsdtar is needed to unpack the editor"
+	fi
 	mkdir -p "$OUT"
 	: >"$OUT/.gdignore"
-	editor
 }
 
 fetch_both() {
+	prepare
 	template "$@" &
 	pid=$!
-	prepare
+	trap 'kill "$pid" $(pgrep -P "$pid" 2>/dev/null) 2>/dev/null' EXIT
+	editor
 	wait "$pid" || die "could not get the $1 export template"
+	trap - EXIT
 }
 
 export_project() {
@@ -164,6 +167,7 @@ windows)
 godot)
 	shift
 	prepare
+	editor
 	exec "$GODOT" "$@"
 	;;
 -h | --help | help)
