@@ -1,0 +1,54 @@
+config_version=5
+
+[application]
+
+config/name="Seeking"
+config/version="0.1.1"
+run/main_scene="res://game/boot.tscn"
+config/features=PackedStringArray("4.7", "Forward Plus")
+config/icon="res://art/ui/icon.png"
+config/windows_native_icon="res://art/ui/icon.ico"
+
+[audio]
+
+driver/mix_rate=48000
+
+[debug]
+
+gdscript/warnings/shadowed_global_identifier=0
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/vsync/vsync_mode=1
+
+[physics]
+
+common/physics_ticks_per_second=120
+common/max_physics_steps_per_frame=12
+common/physics_interpolation=true
+
+[rendering]
+
+renderer/rendering_method="forward_plus"
+viewport/hdr_2d=true
+2d/snap/snap_2d_transforms_to_pixel=false
+textures/vram_compression/import_etc2_astc=true
+
+[shader_globals]
+
+wind={
+"type": "vec2",
+"value": Vector2(0, 0)
+}
+storm={
+"type": "float",
+"value": 0.0
+}
+flash={
+"type": "float",
+"value": 0.0
+}
