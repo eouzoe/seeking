@@ -14,16 +14,13 @@ TEMPLATES="$TOOLS/editor_data/export_templates/$GODOT_VERSION.stable"
 
 usage() {
 	cat <<EOF
-Usage: ./build.sh [target]
+Usage: ./build.sh [mac | win | godot <args>]
 
-Targets:
-  macos          export the macOS app to build/Seeking.app (default)
-  windows        export the Windows executable to build/Seeking.exe
-  godot [args]   run the pinned Godot editor with the given arguments
+  mac            build/Seeking.app (default)
+  win            build/Seeking.exe
+  godot <args>   run the pinned Godot $GODOT_VERSION editor
 
-The first run downloads Godot $GODOT_VERSION into build/toolchain: the editor for this
-machine and only the export template the target needs. Every download is checked
-against a pinned checksum. Nothing is written outside this directory.
+Downloads go to build/toolchain and are checked against pinned checksums.
 EOF
 }
 
@@ -153,13 +150,13 @@ export_project() {
 	[ -e "$target" ] || die "the $preset export did not produce $target"
 }
 
-case "${1:-macos}" in
-macos)
+case "${1:-mac}" in
+mac | macos)
 	fetch_both macos.zip 863271911 122879307 0x2986734b 123597580 88df5e2e6fee99088699be66e6d42e4da4fb0c5619d054297d755a49558a4792
 	export_project macOS "$OUT/Seeking.app"
 	say "done: build/Seeking.app (open build/Seeking.app)"
 	;;
-windows)
+win | windows)
 	fetch_both windows_release_x86_64.exe 1243455810 37890306 0x1ee85628 109268480 d34d36f3be1a6c49c56525ae86469b92e4f417ddf0b43cf00dd80c385c4b0562
 	export_project Windows "$OUT/Seeking.exe"
 	say "done: build/Seeking.exe"
